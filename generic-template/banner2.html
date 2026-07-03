@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Godrej Properties — Pune | Hero (Light Template Match)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#0F172A;
+    --navy-soft:#475569;
+    --gray:#64748B;
+    --gray-light:#94A3B8;
+    --border:#E2E8F0;
+    --input-bg:#F1F5F9;
+    --orange:#DD6B20;
+    --orange-light:#F59E42;
+    --green-dark:#14532D;
+    --green:#16A34A;
+    --green-light:#22C55E;
+    --white:#FFFFFF;
+    --radius:16px;
+    --shadow-card: 0 20px 40px -12px rgba(15,23,42,0.18);
+    --ease: cubic-bezier(.22,.68,0,1);
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{ font-family:'Inter', sans-serif; background:#EEF1F5; }
+
+  /* ============ HERO ============ */
+  .bannersection{
+    position:relative;
+    min-height:100vh;
+    display:flex;
+    align-items:flex-end;
+    overflow:hidden;
+    padding-bottom:0;
+  }
+
+  .banner-carousel{ position:absolute; inset:0; z-index:0; }
+  .banner-slide{
+    position:absolute; inset:0;
+    background-size:cover; background-position:center;
+    opacity:0;
+    transition:opacity 1.1s var(--ease);
+  }
+  .banner-slide.active{ opacity:1; }
+
+  /* Very light wash — just enough for the dots/gradient at the base, image stays fully visible */
+  .bannersection-overlay{
+    position:absolute; inset:0; z-index:1;
+    background:
+      linear-gradient(0deg, rgba(15,23,42,0.55) 0%, rgba(15,23,42,0.08) 30%, rgba(15,23,42,0) 48%),
+      linear-gradient(100deg, rgba(15,23,42,0.38) 0%, rgba(15,23,42,0.12) 26%, rgba(15,23,42,0) 46%);
+    pointer-events:none;
+  }
+
+  .banner-carousel-dots{
+    position:absolute; bottom:16px; left:50%; transform:translateX(-50%);
+    z-index:5; display:flex; gap:8px; align-items:center;
+  }
+  .carousel-dot{
+    width:7px; height:7px; border-radius:50%;
+    background:rgba(255,255,255,0.55); border:none;
+    cursor:pointer; padding:0; transition:all .35s var(--ease);
+  }
+  .carousel-dot.active{ background:var(--white); width:22px; border-radius:4px; }
+
+  .hero-grid{
+    position:relative; z-index:3;
+    max-width:1320px; width:100%; margin:0 auto;
+    padding:0 2.5rem 3rem;
+    display:grid;
+    grid-template-columns:1.1fr 0.8fr;
+    gap:2.5rem;
+    align-items:end;
+  }
+
+  /* -------- Left: text sits directly on the image, no card -------- */
+  .hero-content{
+    padding-bottom:0.5rem;
+  }
+
+  .hero-tag{
+    display:inline-flex; align-items:center; gap:8px;
+    background:rgba(255,255,255,0.95);
+    color:var(--navy);
+    font-size:0.78rem;
+    font-weight:600;
+    padding:7px 14px 7px 10px;
+    border-radius:100px;
+    margin-bottom:1.2rem;
+    box-shadow:0 6px 16px -6px rgba(15,23,42,0.35);
+  }
+  .hero-tag svg{ width:15px; height:15px; color:var(--orange); flex-shrink:0; }
+
+  .hero-title{
+    font-family:'Poppins', sans-serif;
+    font-weight:800;
+    font-size:clamp(2rem, 3vw, 2.9rem);
+    line-height:1.15;
+    color:var(--white);
+    margin:0 0 0.8rem;
+    text-transform:uppercase;
+    letter-spacing:-0.01em;
+    text-shadow:0 2px 20px rgba(0,0,0,0.55), 0 1px 3px rgba(0,0,0,0.6);
+  }
+  .hero-title .accent{ color:var(--orange-light); }
+
+  .hero-desc{
+    font-size:1rem;
+    line-height:1.6;
+    color:rgba(255,255,255,0.92);
+    max-width:480px;
+    margin:0 0 1.7rem;
+    text-shadow:0 2px 12px rgba(0,0,0,0.5);
+  }
+
+  .hero-highlights{
+    display:flex; flex-wrap:wrap; gap:10px;
+    margin-bottom:1.9rem;
+  }
+  .highlight-item{
+    display:flex; align-items:center; gap:7px;
+    background:rgba(255,255,255,0.95);
+    border:none;
+    padding:8px 14px;
+    border-radius:100px;
+    font-size:0.82rem;
+    font-weight:700;
+    color:var(--navy);
+    box-shadow:0 6px 16px -6px rgba(15,23,42,0.3);
+  }
+  .highlight-item .check{
+    width:16px; height:16px;
+    border-radius:50%;
+    background:rgba(22,163,74,0.12);
+    display:flex; align-items:center; justify-content:center;
+    flex-shrink:0;
+  }
+  .highlight-item svg{ width:10px; height:10px; color:var(--green); }
+
+  .btn-gold{
+    display:inline-flex; align-items:center; gap:10px;
+    background:linear-gradient(135deg, var(--green-dark) 0%, var(--green-light) 100%);
+    color:var(--white);
+    border:none;
+    padding:14px 28px;
+    font-family:'Inter', sans-serif;
+    font-size:0.92rem;
+    font-weight:700;
+    border-radius:10px;
+    cursor:pointer;
+    box-shadow:0 10px 24px -6px rgba(22,163,74,0.45);
+    transition:transform .25s var(--ease), box-shadow .25s var(--ease);
+  }
+  .btn-gold:hover{ transform:translateY(-2px); box-shadow:0 14px 28px -6px rgba(22,163,74,0.55); }
+  .btn-gold svg{ width:16px; height:16px; }
+
+  /* -------- Right: form card, styled like the property cards -------- */
+  .hero-form-wrapper{ position:relative; }
+
+  .hero-form-card{
+    background:var(--white);
+    border-radius:var(--radius);
+    box-shadow:var(--shadow-card);
+    padding:1.9rem 2rem 2rem;
+  }
+
+  .form-header{ margin-bottom:1.3rem; }
+  .form-eyebrow{
+    display:inline-flex; align-items:center; gap:6px;
+    color:var(--green);
+    font-size:0.72rem;
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:0.06em;
+    margin-bottom:8px;
+  }
+  .form-eyebrow svg{ width:12px; height:12px; }
+  .form-title{
+    font-family:'Poppins', sans-serif;
+    font-weight:700;
+    font-size:1.35rem;
+    color:var(--navy);
+    margin:0 0 4px;
+  }
+  .form-subtitle{
+    font-size:0.85rem;
+    color:var(--gray);
+    margin:0;
+    line-height:1.5;
+  }
+
+  .form-inputContainer{ margin-bottom:0.85rem; }
+  .form-inputContainer label{
+    display:block;
+    font-size:0.72rem;
+    font-weight:600;
+    color:var(--navy-soft);
+    margin-bottom:6px;
+  }
+
+  .form-input{
+    width:100%;
+    padding:12px 14px;
+    background:var(--input-bg);
+    border:1.5px solid transparent;
+    border-radius:10px;
+    color:var(--navy);
+    font-family:'Inter', sans-serif;
+    font-size:0.92rem;
+    outline:none;
+    transition:border-color .2s var(--ease), background .2s var(--ease);
+  }
+  .form-input::placeholder{ color:var(--gray-light); }
+  .form-input:focus{ border-color:var(--orange); background:var(--white); }
+
+  .hero-form-card select.form-input{ color:var(--navy); cursor:pointer; }
+  .hero-form-card select.form-input option{ background:var(--white); color:var(--navy); }
+
+  .row-split{ display:grid; grid-template-columns:84px 1fr; gap:10px; }
+
+  .consent-row{
+    display:flex; gap:9px; align-items:flex-start;
+    margin-bottom:1.2rem;
+  }
+  .consent-row input{ margin-top:3px; accent-color:var(--green); }
+  .form-checkboxlabel{
+    color:var(--gray);
+    font-size:0.72rem;
+    line-height:1.5;
+    cursor:pointer;
+  }
+  .form-checkboxlabel a{ color:var(--orange); text-decoration:underline; }
+
+  .form-SubmitBtn{
+    width:100%;
+    padding:14px;
+    background:linear-gradient(135deg, var(--green-dark) 0%, var(--green-light) 100%);
+    color:var(--white);
+    border:none;
+    border-radius:10px;
+    font-family:'Inter', sans-serif;
+    font-weight:700;
+    font-size:0.94rem;
+    cursor:pointer;
+    box-shadow:0 10px 24px -6px rgba(22,163,74,0.4);
+    transition:transform .2s var(--ease), box-shadow .2s var(--ease);
+  }
+  .form-SubmitBtn:hover{ transform:translateY(-2px); box-shadow:0 14px 28px -6px rgba(22,163,74,0.5); }
+
+  .form-trust{
+    margin-top:0.9rem;
+    text-align:center;
+    font-size:0.72rem;
+    color:var(--gray-light);
+  }
+
+  /* ============ MOBILE ============ */
+  @media (max-width:768px){
+    .bannersection{ min-height:100vh; align-items:flex-end; }
+    .bannersection-overlay{
+      background:linear-gradient(0deg, rgba(15,23,42,0.68) 0%, rgba(15,23,42,0.15) 40%, rgba(15,23,42,0) 60%);
+    }
+    .hero-grid{
+      grid-template-columns:1fr;
+      padding:0 1.1rem 1.6rem;
+      gap:1.2rem;
+    }
+    .hero-content{ padding-bottom:0; }
+    .hero-title{ font-size:1.7rem; }
+    .hero-desc{ display:none; }
+    .btn-gold{ width:100%; justify-content:center; }
+    .hero-form-card{ padding:1.5rem 1.4rem; }
+  }
+</style>
+</head>
+<body>
+
+<section class="bannersection">
+  <div class="banner-carousel" id="bannerCarousel" aria-label="Banner image carousel">
+    <div class="banner-slide active" style="background-image:url('assests/images/banner/banner.webp');"></div>
+    <div class="banner-slide" style="background-image:url('assests/images/banner/card-lg-1.webp');"></div>
+    <div class="banner-slide" style="background-image:url('assests/images/banner/card-lg-2.webp');"></div>
+    <div class="banner-slide" style="background-image:url('assests/images/banner/card-lg-3.webp');"></div>
+  </div>
+
+  <div class="bannersection-overlay"></div>
+
+  <div class="banner-carousel-dots" id="bannerDots" aria-label="Carousel navigation">
+    <button class="carousel-dot active" data-index="0" aria-label="Slide 1"></button>
+    <button class="carousel-dot" data-index="1" aria-label="Slide 2"></button>
+    <button class="carousel-dot" data-index="2" aria-label="Slide 3"></button>
+    <button class="carousel-dot" data-index="3" aria-label="Slide 4"></button>
+  </div>
+
+  <div class="hero-grid">
+    <!-- Left: content card -->
+    <div class="hero-content">
+      <div class="hero-tag">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+        Godrej Properties, Pune
+      </div>
+
+      <h1 class="hero-title">Premium <span class="accent">2, 3 &amp; 4 BHK</span> Homes</h1>
+
+      <p class="hero-desc">Direct pricing, premium locations &amp; 50+ luxury amenities across Pune's fastest growing micro-markets.</p>
+
+      <div class="hero-highlights">
+        <div class="highlight-item"><span class="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg></span>RERA Certified</div>
+        <div class="highlight-item"><span class="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg></span>Zero Brokerage</div>
+        <div class="highlight-item"><span class="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg></span>50+ Facilities</div>
+      </div>
+
+      <button class="btn-gold popup-trigger" data-subheading="Download Brochure">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+        Download Brochure
+      </button>
+    </div>
+
+    <!-- Right: form card -->
+    <div class="hero-form-wrapper">
+      <div class="hero-form-card" id="stickyForm">
+        <div class="form-header">
+          <span class="form-eyebrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>Verified Pricing</span>
+          <h2 class="form-title">Enquire Now</h2>
+          <p class="form-subtitle">Register to unlock exclusive pricing &amp; offers</p>
+        </div>
+        <form id="ModalFormSlug1" data-tracking-id="form_2">
+          <div class="form-inputContainer">
+            <label for="f-name">Full name</label>
+            <input id="f-name" type="text" class="form-input form-name" placeholder="Enter your name" aria-label="Enter Your Name" required />
+          </div>
+
+          <div class="form-inputContainer row-split">
+            <div>
+              <label for="f-code">Code</label>
+              <select id="f-code" class="form-input form-country" aria-label="Select Country Code" required>
+                <option value="+91" selected>+91</option>
+                <option value="+1">+1</option>
+                <option value="+44">+44</option>
+                <option value="+971">+971</option>
+              </select>
+            </div>
+            <div>
+              <label for="f-number">Mobile number</label>
+              <input id="f-number" type="text" class="form-input form-number" placeholder="98765 43210" aria-label="Enter Mobile Number" required />
+            </div>
+          </div>
+
+          <div class="form-inputContainer">
+            <label for="f-project">Project</label>
+            <select id="f-project" class="form-input form-project" aria-label="Select Project" required>
+              <option value="6056" disabled selected>Select a project</option>
+              <option value="5780">Godrej Elaris</option>
+              <option value="6023">Godrej Kharadi</option>
+              <option value="6052">The Aqua Retreat</option>
+            </select>
+          </div>
+
+          <div class="consent-row">
+            <input type="checkbox" id="form-checkbox" checked required />
+            <label for="form-checkbox" class="form-checkboxlabel">I consent to receive updates in accordance with the <a href="https://www.homesfy.co.in/privacy.html" target="_blank" rel="noopener">privacy policy</a></label>
+          </div>
+
+          <div class="form-inputContainer" style="margin-bottom:0;">
+            <button type="submit" class="form-SubmitBtn">Get Offer Details</button>
+          </div>
+        </form>
+        <p class="form-trust">No spam. No brokerage. Ever.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  (function(){
+    const slides = document.querySelectorAll('.banner-slide');
+    const dots = document.querySelectorAll('.carousel-dot');
+    let current = 0;
+    function show(i){
+      slides.forEach(s=>s.classList.remove('active'));
+      dots.forEach(d=>d.classList.remove('active'));
+      slides[i].classList.add('active');
+      dots[i].classList.add('active');
+      current = i;
+    }
+    dots.forEach(dot=>{
+      dot.addEventListener('click', ()=> show(parseInt(dot.dataset.index)));
+    });
+    setInterval(()=>{ show((current+1) % slides.length); }, 5000);
+  })();
+</script>
+
+</body>
+</html>
