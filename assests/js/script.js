@@ -160,4 +160,57 @@ document.addEventListener("DOMContentLoaded", function () {
 //     })
 // })
 
-function repositionWidget(){let t=document.querySelector("#launcher"),e=window.matchMedia("(max-width:768px)").matches?"60px":"0px";if(t){t.style.setProperty("bottom",e,"important"),t.style.setProperty("left","5px","important"),t.style.setProperty("right","auto","important"),t.style.setProperty("transform","none","important");let n=document.querySelector("iframe[title*='Chat']");n&&n.parentElement&&(n.parentElement.style.setProperty("bottom",e,"important"),n.parentElement.style.setProperty("left","5px","important"),n.parentElement.style.setProperty("right","auto","important"))}}function forceRepositioning(){let t=window.matchMedia("(max-width:768px)").matches?"0px":"60px";["#launcher","[data-testid='launcher']",".zEWidget-launcher","iframe[title*='Chat']"].forEach((e=>{let n=document.querySelector(e);if(n){let e=n.parentElement||n;e.style.setProperty("bottom",t,"important"),e.style.setProperty("left","5px","important"),e.style.setProperty("right","auto","important"),e.style.setProperty("transform","none","important")}}))}function loadZeSnippet(){setTimeout((function(){var t=document.createElement("script");t.id="ze-snippet",t.src="https://static.zdassets.com/ekr/snippet.js?key=94b386d0-0e8f-40fe-b5ff-a939cb332fbc",document.head.appendChild(t),t.onload=function(){var t=setInterval((function(){if("undefined"!=typeof zE&&document.querySelector("#launcher")&&(clearInterval(t),repositionWidget(),zE("webWidget:on","open",(function(){setTimeout(repositionWidget,100)})),zE("webWidget:on","close",(function(){setTimeout(repositionWidget,100),setTimeout(forceRepositioning,500)})),zE("webWidget:on","minimize",(function(){setTimeout(repositionWidget,100),setTimeout(forceRepositioning,500)})),zE("webWidget:on","maximize",(function(){setTimeout(repositionWidget,100)})),zE("webWidget:on","launcherClick",(function(){setTimeout(repositionWidget,100)})),setInterval(forceRepositioning,2e3),window.MutationObserver)){const t=new MutationObserver((function(t){t.forEach((function(t){"attributes"!==t.type||"style"!==t.attributeName&&"class"!==t.attributeName||setTimeout(repositionWidget,50)}))}));setTimeout((function(){let e=document.querySelector("#launcher");e&&(t.observe(e,{attributes:!0,subtree:!0}),e.parentElement&&t.observe(e.parentElement,{attributes:!0,subtree:!0}))}),1e3)}}),100)}}),4e3)}function toggleTab(t){document.querySelectorAll('.tab input[type="checkbox"]').forEach((function(e){e.id!==t&&(e.checked=!1)}))}function addPersistentCSS(){const t=document.createElement("style");t.textContent="\n        #launcher,\n        [data-testid='launcher'],\n        .zEWidget-launcher {\n            bottom: 0px !important;\n            left: 5px !important;\n            right: auto !important;\n            transform: none !important;\n        }\n        \n        /* Target the iframe container as well */\n        iframe[title*=\"Chat\"] {\n            position: fixed !important;\n            bottom: 0px !important;\n            left: 5px !important;\n            right: auto !important;\n        }\n\n        @media (max-width:768px) {\n            #launcher,\n        [data-testid='launcher'],\n        .zEWidget-launcher {\n            bottom: 60px !important;\n            left: 5px !important;\n            right: auto !important;\n            transform: none !important;\n        }\n        \n        /* Target the iframe container as well */\n        iframe[title*=\"Chat\"] {\n            position: fixed !important;\n            bottom: 60px !important;\n            left: 5px !important;\n            right: auto !important;\n        }\n        }\n    ",document.head.appendChild(t)}addPersistentCSS(),loadZeSnippet(),window.addEventListener("resize",repositionWidget)
+function setupPropertyCardFlips() {
+    document.querySelectorAll(".property-card").forEach((card) => {
+        const toggleFlip = () => card.classList.toggle("is-flipped");
+        card.querySelectorAll(".flip-toggle").forEach((el) => {
+            el.addEventListener("click", (event) => {
+                console.log("Flip toggle clicked", el);
+                event.preventDefault();
+                event.stopPropagation();
+                toggleFlip();
+            });
+        });
+    });
+}
+
+function syncPropertyCardHeights() {
+    console.log("Syncing property card heights");
+    if (window.matchMedia("(max-width: 768px)").matches) {
+        console.log("Mobile view detected, syncing heights for front and back of cards");
+        document.querySelectorAll(".property-card").forEach((card) => {
+            const inner = card.querySelector(".property-card-inner");
+            const front = card.querySelector(".property-card-front");
+            console.log(`front height : ${front.scrollHeight}px, front.style.display: ${front.style.display}`);
+            const back = card.querySelector(".property-card-back");
+            console.log(`front height : ${front.scrollHeight}px`);
+            if (!front || !back) return;
+            back.style.height = front.scrollHeight + "px";
+        });
+        return;
+    }
+
+    document.querySelectorAll(".property-card").forEach((card) => {
+        const inner = card.querySelector(".property-card-inner");
+        if (!inner) return;
+
+        const front = card.querySelector(".property-card-front");
+        const back = card.querySelector(".property-card-back");
+        if (!front || !back) return;
+
+        const frontHeight = front.scrollHeight;
+        inner.style.height = front.height + "px";
+        back.style.height = front.height + "px";
+
+        console.log(`Front height: ${frontHeight}px, Back height: ${back.offsetHeight}px, inner height: ${card.offsetHeight}px`);
+    });
+}
+
+document.readyState === "loading"
+    ? document.addEventListener("DOMContentLoaded", () => {
+          setupPropertyCardFlips();
+          syncPropertyCardHeights();
+          window.addEventListener("resize", syncPropertyCardHeights);
+          window.addEventListener("load", syncPropertyCardHeights);
+      })
+    : (setupPropertyCardFlips(), syncPropertyCardHeights(), window.addEventListener("resize", syncPropertyCardHeights), window.addEventListener("load", syncPropertyCardHeights));
